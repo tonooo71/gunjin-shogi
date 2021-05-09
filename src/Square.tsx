@@ -20,7 +20,8 @@ const Square: React.FC<Props> = ({ piece, type, position }) => {
     // mode: READY
     if (state.mode === "READY") {
       if (state.selected === null) {
-        const validSelect = piece !== 0 && type === "normal";
+        const validSelect =
+          piece !== 0 && (type === "normal" || type === "base");
         validSelect && dispatch({ type: "selectPiece", payload: position });
       } else if (selected) {
         dispatch({ type: "selectPiece", payload: null });
