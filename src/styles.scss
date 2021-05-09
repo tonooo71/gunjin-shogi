@@ -1,0 +1,111 @@
+#root {
+  display: flex;
+}
+
+.gs-container {
+  margin: 2em auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.gs-board {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.gs-line {
+  display: flex;
+}
+
+.gs-square {
+  width: max(3em, 8vh);
+  height: max(3em, 8vh);
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  position: relative;
+  display: flex;
+  cursor: pointer;
+  background-color: gray;
+  box-sizing: border-box;
+  &[data-type="base"] {
+    width: max(6em, 16vh);
+    .gs-piece {
+      margin: 2.5% 6%;
+    }
+    .gs-piece-word {
+      padding-left: 4%;
+    }
+  }
+  &[data-type="river"] {
+    background-color: blue;
+  }
+  &[data-type="bridge"] {
+    background-color: brown;
+  }
+  &:hover {
+    polygon {
+      fill: red;
+    }
+    .gs-piece-word {
+      color: yellow;
+    }
+  }
+}
+
+.gs-piece {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  margin: 5%;
+  polygon {
+    fill: goldenrod;
+    stroke: black;
+    stroke-width: 2;
+  }
+  &[data-reverse="true"] {
+    transform: scale(1, -1);
+  }
+  &[data-selected="true"] {
+    polygon {
+      fill: red;
+    }
+    & + .gs-piece-word {
+      color: yellow;
+    }
+  }
+}
+
+.gs-piece-word {
+  writing-mode: vertical-rl;
+  font-weight: bold;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  font-size: max(0.75em, 2vh);
+  margin: auto;
+  padding-left: 6%;
+  user-select: none;
+}
+
+.gs-toolbar {
+  margin-top: 1em;
+  display: flex;
+  button {
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+}
+
+.gs-debugarea {
+  margin-top: 1em;
+  height: 8em;
+  overflow: auto;
+  background-color: #333;
+  color: #eee;
+  width: max(18em, 48vh);
+  display: flex;
+  flex-direction: column;
+}
