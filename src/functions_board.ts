@@ -1,3 +1,5 @@
+import { full_pieces_set } from "./const";
+
 const copy_board = (board: Board): Board => {
   return board.map((line) => [...line]);
 };
@@ -32,40 +34,14 @@ const shuffle = ([...array]) => {
   return array;
 };
 
-const full_pieces = [
-  16,
-  15,
-  14,
-  13,
-  13,
-  12,
-  12,
-  11,
-  10,
-  9,
-  8,
-  8,
-  7,
-  7,
-  6,
-  6,
-  5,
-  4,
-  4,
-  3,
-  2,
-  1,
-  1,
-];
-
 export const random_board = (): Board => {
-  const shuffled_pieces = shuffle(full_pieces);
+  const shuffled_pieces = shuffle(full_pieces_set);
   const ret_board = [
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
+    Array(5).fill(0),
+    Array(6).fill(0),
+    Array(6).fill(0),
+    Array(6).fill(0),
+    Array(6).fill(0),
     shuffled_pieces.slice(0, 6),
     shuffled_pieces.slice(6, 12),
     shuffled_pieces.slice(12, 18),

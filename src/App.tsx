@@ -1,19 +1,9 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import "./styles.scss";
 import Board from "./Board";
 import Toolbar from "./Toolbar";
-
-const board_ready_state = [
-  [16, 15, 14, 13, 13],
-  [12, 12, 11, 10, 9, 8],
-  [8, 7, 7, 6, 6, 5],
-  [4, 4, 3, 2, 1, 1],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0],
-];
+import { random_board } from "./functions_board";
+import { board_ready_state } from "./const";
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -22,7 +12,17 @@ const reducer = (state: State, action: Action): State => {
     case "selectPiece":
       return { ...state, selected: action.payload };
     case "setBoard":
-      return { ...state, board: action.payload };
+      return { ...state, board: action.payload, selected: null };
+    case "startGame":
+      return { ...state, selected: null, mode: "WAITING" };
+    case "loadBoard": {
+      const board = [
+        ...action.payload.slice(0, 4).map((line) => line.map((num) => -num)),
+        Array(6).fill(0),
+        ...state.board.slice(5, 9),
+      ] as Board;
+      return { ...state, board, mode: "PLAY", myturn: true };
+    }
     default:
       return state;
   }
@@ -32,6 +32,7 @@ const readyState: State = {
   board: board_ready_state,
   mode: "READY",
   selected: null,
+  myturn: true,
 };
 
 export const GSContext = React.createContext(
@@ -40,21 +41,18 @@ export const GSContext = React.createContext(
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, readyState);
+  useEffect(() => {
+    if (state.mode === "WAITING") {
+      const board = random_board().reverse();
+      setTimeout(() => dispatch({ type: "loadBoard", payload: board }), 500);
+    }
+  }, [state.mode]);
+
   return (
     <GSContext.Provider value={{ state, dispatch }}>
       <div className="gs-container">
         <Board />
         <Toolbar />
-        <div className="gs-debugarea">
-          <h4>mode</h4>
-          <span>{state.mode}</span>
-          <h4>selected</h4>
-          <span>{state.selected?.join(", ")}</span>
-          <h4>board</h4>
-          {state.board.map((v, i) => (
-            <span key={i}>{v.join(" ")}</span>
-          ))}
-        </div>
       </div>
     </GSContext.Provider>
   );

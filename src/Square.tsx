@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import Piece from "./Piece";
 import { GSContext } from "./App";
-import { change_piece, same_position } from "./check_board";
+import { change_piece, same_position } from "./functions_board";
 
 type Props = {
   piece: PieceId;
@@ -16,6 +16,8 @@ const Square: React.FC<Props> = ({ piece, type, position }) => {
 
   const handleClick = () => {
     if (type === "river" || type === "bridge") return;
+
+    // mode: READY
     if (state.mode === "READY") {
       if (state.selected === null) {
         const validSelect = piece !== 0 && type === "normal";
@@ -25,8 +27,12 @@ const Square: React.FC<Props> = ({ piece, type, position }) => {
       } else {
         const new_board = change_piece(state.board, state.selected, position);
         dispatch({ type: "setBoard", payload: new_board });
-        dispatch({ type: "selectPiece", payload: null });
       }
+    }
+
+    // mode: WAITING
+    else if (state.mode === "WAITING") {
+      return;
     }
   };
 

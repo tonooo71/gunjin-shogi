@@ -11,7 +11,7 @@ const Piece: React.FC<Props> = ({ piece, selected }) => {
   if (piece === 0 || !validPiece) return null; // no piece
 
   const mine = piece > 0; // piece is mine
-  const reverse = piece < 0; // opponent's piece is reversed ?
+  const reverse = false && piece < 0; // opponent's piece is reversed ?
 
   return (
     <>

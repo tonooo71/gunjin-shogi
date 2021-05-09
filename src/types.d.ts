@@ -1,9 +1,10 @@
-type Mode = "READY" | "PLAY" | "GAMESET";
+type Mode = "READY" | "WAITING" | "PLAY" | "GAMESET";
 
 type State = {
   board: Board;
   mode: Mode;
   selected: Position | null;
+  myturn: boolean;
 };
 
 type Action =
@@ -18,9 +19,16 @@ type Action =
   | {
       type: "setBoard";
       payload: Board;
+    }
+  | {
+      type: "startGame";
+    }
+  | {
+      type: "loadBoard";
+      payload: Board;
     };
 
-type Board = number[][];
+type Board = PieceId[][];
 type PieceId = number;
 type SquareType = "normal" | "bridge" | "river" | "base";
 type Position = [number, number];

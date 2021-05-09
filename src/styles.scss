@@ -44,14 +44,6 @@
   &[data-type="bridge"] {
     background-color: brown;
   }
-  &:hover {
-    polygon {
-      fill: red;
-    }
-    .gs-piece-word {
-      color: yellow;
-    }
-  }
 }
 
 .gs-piece {
@@ -97,15 +89,4 @@
       cursor: not-allowed;
     }
   }
-}
-
-.gs-debugarea {
-  margin-top: 1em;
-  height: 8em;
-  overflow: auto;
-  background-color: #333;
-  color: #eee;
-  width: max(18em, 48vh);
-  display: flex;
-  flex-direction: column;
 }
