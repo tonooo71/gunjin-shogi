@@ -44,6 +44,9 @@
   &[data-type="bridge"] {
     background-color: brown;
   }
+  &[data-candidate="true"] {
+    background-color: orange;
+  }
 }
 
 .gs-piece {

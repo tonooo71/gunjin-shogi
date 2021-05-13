@@ -31,17 +31,28 @@ export const possible_square = (
   const remove_river = (posArr: Position[]) => posArr.filter((p) => p[0] !== 4);
   const remove_invalid = (posArr: Position[]) =>
     posArr.filter((p) => {
-      if (p[0] % 8 === 0) return p[1] >= 0 && p[1] < 5;
-      else return p[1] >= 0 && p[1] < 6;
+      if (p[0] < 0 || p[0] > 8) return false;
+      else if (p[1] < 0) return false;
+      else if (p[0] % 8 === 0 && p[1] > 4) return false;
+      else if (p[0] % 8 !== 0 && p[1] > 5) return false;
+      return true;
     });
   const remove_exist_piece = (posArr: Position[]) =>
     posArr.filter((p) => board[p[0]][p[1]] <= 0);
 
   // 飛行機
   if (piece === 13) {
-    const positions = [
+    let positions = [
       ...[0, 1, 2, 3, 5, 6, 7, 8]
-        .map((num) => num !== position[0] && [num, position[1]]) // 上下
+        .map(
+          (num) =>
+            num !== position[0] && [
+              num,
+              position[0] % 8 === 0 && position[1] >= 3
+                ? position[1] + 1
+                : position[1],
+            ]
+        ) // 上下
         .filter((p) => p), // 自身の場所の取り除き
       [position[0], position[1] + 1], // 右
       [position[0], position[1] - 1], // 左
@@ -49,23 +60,21 @@ export const possible_square = (
     // 本拠地による座標ずれの修正
     if (positions[0][0] === 0 && positions[0][1] > 2) {
       positions[0][1]--;
-    } else if (positions[1][0] === 8 && positions[1][1] > 2) {
-      positions[1][1]--;
     }
-    if (
-      (position[0] === 0 && position[1] === 2) ||
-      (position[0] === 8 && position[1] === 2)
-    ) {
-      positions.concat([1, 2, 3, 5, 6, 7].map((num) => [num, 3]));
+    if (positions[6][0] === 8 && positions[6][1] > 2) {
+      positions[6][1]--;
+    }
+    if (position[0] % 8 === 0 && position[1] === 2) {
+      positions = positions.concat([1, 2, 3, 5, 6, 7].map((num) => [num, 3]));
     }
     return remove_exist_piece(remove_invalid(remove_river(positions)));
   }
   // タンク, 騎兵
   else if (piece === 12 || piece === 5) {
     const positions = [
-      [position[0] + 2, position[1]], // 上2
-      [position[0] + 1, position[1]], // 上1
-      [position[0] - 1, position[1]], // 下
+      [position[0] - 2, position[1]], // 上2
+      [position[0] - 1, position[1]], // 上1
+      [position[0] + 1, position[1]], // 下
       [position[0], position[1] + 1], // 右
       [position[0], position[1] - 1], // 左
     ] as Position[];
@@ -86,13 +95,20 @@ export const possible_square = (
       positions[2] = [5, 4];
     }
     // 本拠地による座標ずれの修正
-    else if (positions[0][0] === 0 && positions[0][1] > 2) {
+    else if (positions[0][0] === 6 && positions[0][1] > 2) {
+      positions[0][1]++;
+    } else if (positions[1][0] === 7 && positions[1][1] > 2) {
+      positions[1][1]++;
+    } else if (positions[2][0] === 1 && positions[2][1] > 2) {
+      positions[2][1]++;
+    } else if (positions[0][0] === 0 && positions[0][1] > 2) {
       positions[0][1]--;
-    } else if (positions[1][0] === 0 && positions[1][1] > 2) {
+    } else if (positions[1][0] === 0 && positions[0][1] > 2) {
       positions[1][1]--;
-    } else if (positions[2][0] === 8 && positions[2][1] > 2) {
+    } else if (positions[2][0] === 8 && positions[1][1] > 2) {
       positions[2][1]--;
     }
+
     if (position[0] === 0 && position[1] === 2) {
       positions.push([1, 3]);
     } else if (position[0] === 8 && position[1] === 2) {
@@ -100,19 +116,19 @@ export const possible_square = (
       if (board[7][3] === 0) positions.push([6, 3]);
     }
     // 2つ前に進めるかどうか
-    if (board[positions[1][0]][positions[1][0]] !== 0) positions.splice(0, 1);
+    if (board[positions[0][0]][positions[0][1]] !== 0) positions.splice(0, 1);
     return remove_exist_piece(remove_invalid(remove_river(positions)));
   }
   // 工兵
   else if (piece === 4) {
-    const positions = [];
+    const positions: Position[] = [];
     // 左
-    let candidate = [position[0], position[1]];
+    let candidate: Position = [position[0], position[1]];
     while (1) {
       candidate[1]--;
       if (candidate[1] < 0) break;
       if (board[candidate[0]][candidate[1]] === 0) {
-        positions.push(candidate);
+        positions.push(candidate.slice());
       } else break;
     }
     // 右
@@ -120,24 +136,39 @@ export const possible_square = (
     while (1) {
       candidate[1]++;
       if (
-        (position[1] % 8 === 0 && candidate[1] > 5) ||
-        (position[1] % 8 !== 0 && candidate[1] > 6)
+        (candidate[0] % 8 === 0 && candidate[1] > 5) ||
+        (candidate[0] % 8 !== 0 && candidate[1] > 6)
       )
         break;
       if (board[candidate[0]][candidate[1]] === 0) {
-        positions.push(candidate);
+        positions.push(candidate.slice());
       } else break;
     }
     // 上
     candidate = [position[0], position[1]];
     while (1) {
-      // 未実装
+      candidate[0]--;
+      if (candidate[0] < 0) break;
+      if (candidate[1] !== 1 && candidate[1] !== 4 && candidate[0] === 4) break;
+      if ((candidate[1] === 1 || candidate[1]) && candidate[0] === 4) continue;
+      if (candidate[0] === 0 && candidate[1] > 2) candidate[1]--;
+      if (board[candidate[0]][candidate[1]] === 0) {
+        positions.push(candidate.slice());
+      } else break;
     }
     // 下
     candidate = [position[0], position[1]];
     while (1) {
-      // 未実装
+      candidate[0]++;
+      if (candidate[0] > 8) break;
+      if (candidate[1] !== 1 && candidate[1] !== 4 && candidate[0] === 4) break;
+      if ((candidate[1] === 1 || candidate[1]) && candidate[0] === 4) continue;
+      if (candidate[0] === 8 && candidate[1] > 2) candidate[1]--;
+      if (board[candidate[0]][candidate[1]] === 0) {
+        positions.push(candidate.slice());
+      } else break;
     }
+    return remove_exist_piece(remove_invalid(remove_river(positions)));
   }
   // 軍旗, 地雷
   else if (piece === 2 || piece === 1) {
@@ -146,8 +177,8 @@ export const possible_square = (
   // 他
   else {
     const positions = [
-      [position[0] + 1, position[1]], // 上
-      [position[0] - 1, position[1]], // 下
+      [position[0] - 1, position[1]], // 上
+      [position[0] + 1, position[1]], // 下
       [position[0], position[1] + 1], // 右
       [position[0], position[1] - 1], // 左
     ] as Position[];
@@ -162,7 +193,11 @@ export const possible_square = (
       positions[1] = [5, 4];
     }
     // 本拠地による座標ずれの修正
-    else if (positions[0][0] === 0 && positions[0][1] > 2) {
+    else if (positions[0][0] === 7 && positions[0][1] > 2) {
+      positions[0][1]++;
+    } else if (positions[1][0] === 1 && positions[1][1] > 2) {
+      positions[1][1]++;
+    } else if (positions[0][0] === 0 && positions[0][1] > 2) {
       positions[0][1]--;
     } else if (positions[1][0] === 8 && positions[1][1] > 2) {
       positions[1][1]--;
@@ -175,4 +210,14 @@ export const possible_square = (
     return remove_exist_piece(remove_invalid(remove_river(positions)));
   }
   return [];
+};
+
+export const include_piece = (
+  position: Position,
+  candidates: Position[]
+): boolean => {
+  for (let p of candidates) {
+    if (position[0] === p[0] && position[1] === p[1]) return true;
+  }
+  return false;
 };

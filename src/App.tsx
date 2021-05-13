@@ -10,9 +10,14 @@ const reducer = (state: State, action: Action): State => {
     case "changeMode":
       return { ...state, mode: action.payload };
     case "selectPiece":
-      return { ...state, selected: action.payload };
+      return { ...state, selected: action.payload, candidates: [] };
     case "setBoard":
-      return { ...state, board: action.payload, selected: null };
+      return {
+        ...state,
+        board: action.payload,
+        selected: null,
+        candidates: [],
+      };
     case "startGame":
       return { ...state, selected: null, mode: "WAITING" };
     case "loadBoard": {
@@ -22,6 +27,16 @@ const reducer = (state: State, action: Action): State => {
         ...state.board.slice(5, 9),
       ] as Board;
       return { ...state, board, mode: "PLAY", myturn: true };
+    }
+    case "startDebug": {
+      return { ...state, selected: null, mode: "DEBUG" };
+    }
+    case "setCandidates": {
+      return {
+        ...state,
+        selected: action.payload2,
+        candidates: action.payload,
+      };
     }
     default:
       return state;
@@ -33,6 +48,7 @@ const readyState: State = {
   mode: "READY",
   selected: null,
   myturn: true,
+  candidates: [],
 };
 
 export const GSContext = React.createContext(
@@ -53,6 +69,9 @@ const App = () => {
       <div className="gs-container">
         <Board />
         <Toolbar />
+
+        <span>{`${state.selected}`}</span>
+        <span>{`${JSON.stringify(state.candidates)}`}</span>
       </div>
     </GSContext.Provider>
   );

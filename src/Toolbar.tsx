@@ -17,6 +17,10 @@ const Toolbar = () => {
     dispatch({ type: "setBoard", payload: new_board });
   };
 
+  const handleClickDebugStart = () => {
+    dispatch({ type: "startDebug" });
+  };
+
   return (
     <div className="gs-toolbar">
       <button disabled={!startBtnEnabled} onClick={handleClickStart}>
@@ -24,6 +28,9 @@ const Toolbar = () => {
       </button>
       <button disabled={!isReadyMode} onClick={handleClickRandomSet}>
         Random Set
+      </button>
+      <button disabled={false} onClick={handleClickDebugStart}>
+        DEBUG
       </button>
       <span>
         {state.mode === "PLAY"
