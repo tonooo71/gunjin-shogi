@@ -39,5 +39,5 @@ type Action =
 
 type Board = PieceId[][];
 type PieceId = number;
-type SquareType = "normal" | "bridge" | "river" | "base";
+type SquareType = "normal" | "bridge" | "river" | "base" | "--base";
 type Position = [number, number];

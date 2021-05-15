@@ -37,7 +37,7 @@ const shuffle = ([...array]) => {
 export const random_board = (): Board => {
   const shuffled_pieces = shuffle(full_pieces_set);
   const ret_board = [
-    Array(5).fill(0),
+    Array(6).fill(0),
     Array(6).fill(0),
     Array(6).fill(0),
     Array(6).fill(0),
@@ -45,7 +45,7 @@ export const random_board = (): Board => {
     shuffled_pieces.slice(0, 6),
     shuffled_pieces.slice(6, 12),
     shuffled_pieces.slice(12, 18),
-    shuffled_pieces.slice(18, 23),
+    [...shuffled_pieces.slice(18, 21), 0, ...shuffled_pieces.slice(21, 23)],
   ];
   return ret_board;
 };

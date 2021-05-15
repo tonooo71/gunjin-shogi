@@ -53,7 +53,7 @@ const Square: React.FC<Props> = ({ piece, type, position }) => {
         dispatch({ type: "selectPiece", payload: null });
       } else {
         if (candidate) {
-          // 戦闘が発生しない
+          // 戦闘が発生しない場合
           const new_board = change_piece(state.board, state.selected, position);
           dispatch({ type: "setBoard", payload: new_board });
         }

@@ -38,6 +38,9 @@
       padding-left: 4%;
     }
   }
+  &[data-type="--base"] {
+    display: none;
+  }
   &[data-type="river"] {
     background-color: blue;
   }
