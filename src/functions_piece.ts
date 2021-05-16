@@ -104,15 +104,15 @@ export const possible_square = (
     )
       positions[3][1]++;
     if (
-      same_position(positions[0], [3, 1]) ||
-      same_position(positions[0], [3, 4])
+      same_position(positions[0], [4, 1]) ||
+      same_position(positions[0], [4, 4])
     ) {
       positions[0][0]--;
     }
     const ahead: Position = [...positions[0]];
     if (valid_position(ahead) && possible_move(board, ahead)) {
       ahead[0]--;
-      if (same_position(ahead, [3, 1]) || same_position(ahead, [3, 4]))
+      if (same_position(ahead, [4, 1]) || same_position(ahead, [4, 4]))
         ahead[0]--;
       positions.push(ahead); // 上2
     }
