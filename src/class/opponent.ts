@@ -20,12 +20,12 @@ export class Opponent {
 
   // Method
   // 初期状態のボード情報を受け取る
-  LoadBoard = (_board: Board) => {
+  // 敵のターン
+  loadBoard = (_board: Board) => {
     this.board = _board;
   };
   // プレイヤーからボード情報を受け取る
-  // myturnがfalseのときは、ボード情報を書き込むだけ(敵のターンでない)
-  getBoard = (_board: Board, myturn: boolean = true) => {};
+  getBoard = (_board: Board) => {};
   // プレイヤーにボード情報を返す(予め登録したハンドラを呼び出す)
   returnBoard = () => {
     return this.returnBoardHandler(this.board);
@@ -53,7 +53,7 @@ export class CPU extends Opponent {
 
   // LoadBoard = (_board: Board) => {};
 
-  getBoard = (_board: Board, myturn: boolean = true) => {
+  getBoard = (_board: Board) => {
     // ここで渡ってくるボード情報はプレイヤーの駒情報も含んだ完全なものなので、
     // 駒を動かすときのプログラムに渡すときは、プレイヤーの駒情報を隠す必要がある
     // プレイヤーでいうレフェリークラスがない(含む)ので、駒の移動判定も行う必要がある

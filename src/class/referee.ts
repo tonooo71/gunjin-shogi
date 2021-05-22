@@ -105,7 +105,7 @@ export class Referee {
       const myturn = true; // プレイヤー側でスタート
       // 敵にボード情報を通知する
       // WebSocketの場合、片側のみがこれを行わないとおかしくなる
-      this.opponent.getBoard(board, false);
+      this.opponent.loadBoard(board);
       this.dispatch({ type: "startGame", payload: { board, myturn } });
     } else {
       this.board = _board;
@@ -121,7 +121,7 @@ export class Referee {
       const myturn = true; // プレイヤー側でスタート
       // 敵にボード情報を通知する
       // WebSocketの場合、片側のみがこれを行わないとおかしくなる
-      this.opponent.getBoard(board, false);
+      this.opponent.loadBoard(board);
       this.dispatch({ type: "startGame", payload: { board, myturn } });
     } else {
       this.board = _board;
