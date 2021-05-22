@@ -1,5 +1,7 @@
-export const same_position = (pos1: Position, pos2: Position) => {
-  return pos1[0] === pos2[0] && pos1[1] === pos2[1];
+export const same_position = (pos1: Position | null, pos2: Position | null) => {
+  return (
+    pos1 !== null && pos2 !== null && pos1[0] === pos2[0] && pos1[1] === pos2[1]
+  );
 };
 
 export const valid_position = (pos: Position): boolean =>

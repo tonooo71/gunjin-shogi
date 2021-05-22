@@ -1,13 +1,14 @@
 import { full_pieces_set } from "./const";
 
-const copy_board = (board: Board): Board => {
+export const copy_board = (board: Board): Board => {
   return board.map((line) => [...line]);
 };
 
 export const ready_board = (board: Board): boolean => {
   return (
     [0, 1, 2, 3, 4].every((index) => board[index].every((id) => id === 0)) &&
-    [5, 6, 7, 8].every((index) => board[index].every((id) => id !== 0))
+    [5, 6, 7].every((index) => board[index].every((id) => id !== 0)) &&
+    [0, 1, 2, 4, 5].every((index) => board[8][index] != 0)
   );
 };
 
@@ -18,12 +19,6 @@ export const change_piece = (board: Board, pos1: Position, pos2: Position) => {
     new_board[pos1[0]][pos1[1]],
   ];
   return new_board;
-};
-
-export const same_position = (pos1: Position | null, pos2: Position | null) => {
-  return (
-    pos1 !== null && pos2 !== null && pos1[0] === pos2[0] && pos1[1] === pos2[1]
-  );
 };
 
 const shuffle = ([...array]) => {
@@ -47,5 +42,14 @@ export const random_board = (): Board => {
     shuffled_pieces.slice(12, 18),
     [...shuffled_pieces.slice(18, 21), 0, ...shuffled_pieces.slice(21, 23)],
   ];
+  return ret_board;
+};
+
+export const reverse_board = (board: Board): Board => {
+  const ret_board: Board = [];
+  board.forEach((l) => {
+    const nl = l.map((s) => -s);
+    ret_board.unshift(nl);
+  });
   return ret_board;
 };

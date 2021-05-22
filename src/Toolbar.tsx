@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
-import { GSContext } from "./App";
+import { GSContext } from "./Game";
 import { random_board, ready_board } from "./functions_board";
 
 const Toolbar = () => {
-  const { state, dispatch } = useContext(GSContext);
+  const { state, dispatch, referee } = useContext(GSContext);
 
   const startBtnEnabled = state.mode === "READY" && ready_board(state.board);
   const isReadyMode = state.mode === "READY";
 
   const handleClickStart = () => {
-    dispatch({ type: "startGame" });
+    referee.current?.initialize(state.board);
   };
 
   const handleClickRandomSet = () => {

@@ -1,80 +1,21 @@
-import React, { useEffect, useReducer } from "react";
-import "./styles.scss";
-import Board from "./Board";
-import Toolbar from "./Toolbar";
-import { random_board } from "./functions_board";
-import { board_ready_state } from "./const";
+import React, { useState } from "react";
+import Game from "./Game";
 
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case "changeMode":
-      return { ...state, mode: action.payload };
-    case "selectPiece":
-      return { ...state, selected: action.payload, candidates: [] };
-    case "setBoard":
-      return {
-        ...state,
-        board: action.payload,
-        selected: null,
-        candidates: [],
-      };
-    case "startGame":
-      return { ...state, selected: null, mode: "WAITING" };
-    case "loadBoard": {
-      const board = [
-        ...action.payload.slice(0, 4).map((line) => line.map((num) => -num)),
-        Array(6).fill(0),
-        ...state.board.slice(5, 9),
-      ] as Board;
-      return { ...state, board, mode: "PLAY", myturn: true };
-    }
-    case "startDebug": {
-      return { ...state, selected: null, mode: "DEBUG" };
-    }
-    case "setCandidates": {
-      return {
-        ...state,
-        selected: action.payload2,
-        candidates: action.payload,
-      };
-    }
-    default:
-      return state;
-  }
-};
+const App: React.FC = () => {
+  const [mode, setMode] = useState<GameType>("none");
 
-const readyState: State = {
-  board: board_ready_state,
-  mode: "READY",
-  selected: null,
-  myturn: true,
-  candidates: [],
-};
-
-export const GSContext = React.createContext(
-  {} as { state: State; dispatch: React.Dispatch<Action> }
-);
-
-const App = () => {
-  const [state, dispatch] = useReducer(reducer, readyState);
-  useEffect(() => {
-    if (state.mode === "WAITING") {
-      const board = random_board().reverse();
-      setTimeout(() => dispatch({ type: "loadBoard", payload: board }), 500);
-    }
-  }, [state.mode]);
-
-  return (
-    <GSContext.Provider value={{ state, dispatch }}>
-      <div className="gs-container">
-        <Board />
-        <Toolbar />
-
-        <span>{`${state.selected}`}</span>
-        <span>{`${JSON.stringify(state.candidates)}`}</span>
+  if (mode === "none") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", margin: "auto" }}>
+        <h3>Please Select Mode</h3>
+        {/* <button onClick={() => setMode("debug")}>Debug Mode</button> */}
+        <button onClick={() => setMode("cpu")}>CPU Mode</button>
+        {/* <button onClick={() => setMode("wshuman")}>WebSocket Mode</button> */}
       </div>
-    </GSContext.Provider>
-  );
+    );
+  }
+
+  return <Game mode={mode} />;
 };
 
 export default App;

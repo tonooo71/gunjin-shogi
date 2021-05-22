@@ -1,3 +1,6 @@
+type OpponentType = "cpu" | "wshuman";
+type GameType = OpponentType | "debug" | "none";
+
 type Mode = "READY" | "WAITING" | "PLAY" | "GAMESET" | "DEBUG";
 
 type State = {
@@ -23,9 +26,13 @@ type Action =
     }
   | {
       type: "startGame";
+      payload: {
+        board: Board;
+        myturn: boolean;
+      };
     }
   | {
-      type: "loadBoard";
+      type: "loadBoard2";
       payload: Board;
     }
   | {
@@ -35,6 +42,10 @@ type Action =
       type: "setCandidates";
       payload: Position[];
       payload2: Position;
+    }
+  | {
+      type: "loadBoard";
+      payload: Board;
     };
 
 type Board = PieceId[][];

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import Square from "./Square";
-import { GSContext } from "./App";
+import { GSContext } from "./Game";
 
 const Board = () => {
   const { state, dispatch } = useContext(GSContext);

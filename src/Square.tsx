@@ -1,8 +1,12 @@
 import React, { useContext } from "react";
 import Piece from "./Piece";
-import { GSContext } from "./App";
-import { change_piece, same_position } from "./functions_board";
-import { include_piece, possible_square } from "./functions_piece";
+import { GSContext } from "./Game";
+import { change_piece } from "./functions_board";
+import {
+  include_piece,
+  possible_square,
+  same_position,
+} from "./functions_piece";
 
 type Props = {
   piece: PieceId;
