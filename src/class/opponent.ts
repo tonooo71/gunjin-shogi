@@ -53,7 +53,7 @@ export class CPU extends Opponent {
 
   // LoadBoard = (_board: Board) => {};
 
-  getBoard = (_board: Board) => {
+  getBoard = (_board: Board, myturn: boolean = true) => {
     // ここで渡ってくるボード情報はプレイヤーの駒情報も含んだ完全なものなので、
     // 駒を動かすときのプログラムに渡すときは、プレイヤーの駒情報を隠す必要がある
     // プレイヤーでいうレフェリークラスがない(含む)ので、駒の移動判定も行う必要がある
