@@ -89,10 +89,8 @@ export class Referee {
     } else {
       // error!
     }
-    console.log(this.board);
     // Opponentに反転させたBoard情報を返す
     this.opponent.getBoard(reverse_board(this.board));
-    console.log(this.board);
     // PlayerにBoard情報を返す
     return this.board;
   };
