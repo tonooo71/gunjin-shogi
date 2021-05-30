@@ -1,11 +1,11 @@
-import { random_board } from "../functions_board";
+import { random_board, reverse_board } from "../functions_board";
 
 // 敵クラス(というかインターフェース)
 export class Opponent {
   // Property
   board: Board = Array(9)
     .fill(0)
-    .map((z) => Array(6).fill(0));
+    .map(() => Array(6).fill(0));
   returnBoardHandler: BoardHandlerType;
   initializeHandler: BoardHandlerType;
 
@@ -28,7 +28,7 @@ export class Opponent {
   getBoard = (_board: Board) => {};
   // プレイヤーにボード情報を返す(予め登録したハンドラを呼び出す)
   returnBoard = () => {
-    return this.returnBoardHandler(this.board);
+    return this.returnBoardHandler(reverse_board(this.board));
   };
 }
 
@@ -43,11 +43,7 @@ export class CPU extends Opponent {
     // ボード情報の初期化を行う必要がある
     this.board = random_board();
     // ボードに駒を設置したことを通知
-    const ret_board: Board = [];
-    this.board.forEach((l) => {
-      const nl = l.map((s) => -s);
-      ret_board.unshift(nl);
-    });
+    const ret_board = reverse_board(this.board);
     this.initializeHandler(ret_board);
   }
 
@@ -59,6 +55,7 @@ export class CPU extends Opponent {
     // プレイヤーでいうレフェリークラスがない(含む)ので、駒の移動判定も行う必要がある
 
     // 最後にレフェリークラスにボード情報を返す
+    this.board = _board;
     this.returnBoard();
   };
 

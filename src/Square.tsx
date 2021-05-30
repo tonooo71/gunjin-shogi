@@ -15,7 +15,7 @@ type Props = {
 };
 
 const Square: React.FC<Props> = ({ piece, type, position }) => {
-  const { state, dispatch } = useContext(GSContext);
+  const { state, dispatch, referee } = useContext(GSContext);
 
   const selected = same_position(state.selected, position);
   const candidate = include_piece(position, state.candidates);
@@ -42,14 +42,38 @@ const Square: React.FC<Props> = ({ piece, type, position }) => {
       return;
     }
 
+    // mode: WAITING
+    else if (state.mode === "PLAY") {
+      if (state.selected === null) {
+        if (piece > 0) {
+          const candidates = possible_square(piece, state.board, position);
+          dispatch({
+            type: "setCandidates",
+            payload: candidates,
+            payload2: position,
+          });
+        }
+      } else if (selected) {
+        dispatch({ type: "selectPiece", payload: null });
+      } else {
+        if (candidate) {
+          const new_board = referee.current?.movePiece(
+            state.selected,
+            position
+          );
+          new_board && dispatch({ type: "setBoard", payload: new_board });
+        }
+      }
+    }
+
     // mode: DEBUG
     else if (state.mode === "DEBUG") {
       if (state.selected === null) {
         if (piece > 0) {
-          const candidate = possible_square(piece, state.board, position);
+          const candidates = possible_square(piece, state.board, position);
           dispatch({
             type: "setCandidates",
-            payload: candidate,
+            payload: candidates,
             payload2: position,
           });
         }

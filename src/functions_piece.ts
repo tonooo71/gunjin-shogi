@@ -12,8 +12,13 @@ export const valid_position = (pos: Position): boolean =>
   !same_position(pos, [0, 3]) &&
   !same_position(pos, [8, 3]);
 
-export const possible_move = (board: Board, pos: Position): boolean =>
-  pos[0] !== 4 && board[pos[0]][pos[1]] === 0;
+const possible_move = (board: Board, pos: Position): number => {
+  if (pos[0] === 4) return -1; // NG
+  if (board[pos[0]][pos[1]] === 0) return 0;
+  // NO ENEMY
+  else if (board[pos[0]][pos[1]] < 0) return 1; // ENEMY
+  return -1; // NG
+};
 
 // 軍旗はここでは考慮しない、入力値で補正されているものとする
 export const match_pieces = (_piece1: PieceId, _piece2: PieceId): boolean[] => {
@@ -89,9 +94,11 @@ export const possible_square = (
       [position[0], position[1] + 1], // 右
     ] as Position[];
     if (same_position(position, [8, 2])) {
-      if (possible_move(board, [7, 3])) {
+      const next_square = possible_move(board, [7, 3]);
+      if (next_square >= 0) {
         positions.push([7, 3]);
-        if (possible_move(board, [6, 3])) positions.push([6, 3]);
+        if (next_square === 0 && possible_move(board, [6, 3]) >= 0)
+          positions.push([6, 3]);
       }
     }
     if (same_position(position, [0, 2])) positions.push([1, 3]);
@@ -111,8 +118,15 @@ export const possible_square = (
     ) {
       positions[0][0]--;
     }
+    if (
+      same_position(positions[1], [4, 1]) ||
+      same_position(positions[1], [4, 4])
+    ) {
+      positions[1][0]++;
+    }
     const ahead: Position = [...positions[0]];
-    if (valid_position(ahead) && possible_move(board, ahead)) {
+    const next_square = possible_move(board, ahead);
+    if (valid_position(ahead) && next_square === 0) {
       ahead[0]--;
       if (same_position(ahead, [4, 1]) || same_position(ahead, [4, 4]))
         ahead[0]--;
@@ -132,8 +146,12 @@ export const possible_square = (
       if (candidate[0] < 0) break;
       if (candidate[1] !== 1 && candidate[1] !== 4 && candidate[0] === 4) break;
       if (candidate[1] % 3 === 1 && candidate[0] === 4) continue;
-      if (possible_move(board, candidate)) {
+      const next_square = possible_move(board, candidate);
+      if (next_square === 0) {
         positions.push(candidate.slice() as Position);
+      } else if (next_square === 1) {
+        positions.push(candidate.slice() as Position);
+        break;
       } else break;
     }
     if (same_position(position, [8, 2])) {
@@ -141,8 +159,12 @@ export const possible_square = (
       while (1) {
         candidate[0]--;
         if (candidate[0] < 5) break;
-        if (possible_move(board, candidate)) {
+        const next_square = possible_move(board, candidate);
+        if (next_square === 0) {
           positions.push(candidate.slice() as Position);
+        } else if (next_square === 1) {
+          positions.push(candidate.slice() as Position);
+          break;
         } else break;
       }
     }
@@ -153,8 +175,12 @@ export const possible_square = (
       if (candidate[0] > 8) break;
       if (candidate[1] !== 1 && candidate[1] !== 4 && candidate[0] === 4) break;
       if (candidate[1] % 3 === 1 && candidate[0] === 4) continue;
-      if (possible_move(board, candidate)) {
+      const next_square = possible_move(board, candidate);
+      if (next_square === 0) {
         positions.push(candidate.slice() as Position);
+      } else if (next_square === 1) {
+        positions.push(candidate.slice() as Position);
+        break;
       } else break;
     }
     if (same_position(position, [0, 2])) {
@@ -162,8 +188,12 @@ export const possible_square = (
       while (1) {
         candidate[0]--;
         if (candidate[0] > 3) break;
-        if (possible_move(board, candidate)) {
+        const next_square = possible_move(board, candidate);
+        if (next_square === 0) {
           positions.push(candidate.slice() as Position);
+        } else if (next_square === 1) {
+          positions.push(candidate.slice() as Position);
+          break;
         } else break;
       }
     }
@@ -174,8 +204,12 @@ export const possible_square = (
       if (candidate[1] < 0) break;
       if (same_position(candidate, [0, 3]) || same_position(candidate, [8, 3]))
         continue;
-      if (possible_move(board, candidate)) {
+      const next_square = possible_move(board, candidate);
+      if (next_square === 0) {
         positions.push(candidate.slice() as Position);
+      } else if (next_square === 1) {
+        positions.push(candidate.slice() as Position);
+        break;
       } else break;
     }
     // 右
@@ -185,8 +219,12 @@ export const possible_square = (
       if (candidate[1] > 6) break;
       if (same_position(candidate, [0, 3]) || same_position(candidate, [8, 3]))
         continue;
-      if (possible_move(board, candidate)) {
+      const next_square = possible_move(board, candidate);
+      if (next_square === 0) {
         positions.push(candidate.slice() as Position);
+      } else if (next_square === 1) {
+        positions.push(candidate.slice() as Position);
+        break;
       } else break;
     }
     //

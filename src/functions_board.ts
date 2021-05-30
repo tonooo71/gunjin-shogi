@@ -49,7 +49,11 @@ export const reverse_board = (board: Board): Board => {
   const ret_board: Board = [];
   board.forEach((l) => {
     const nl = l.map((s) => -s);
-    ret_board.unshift(nl);
+    ret_board.unshift(nl.reverse());
   });
+  if (ret_board[0][3] !== 0)
+    [ret_board[0][2], ret_board[0][3]] = [ret_board[0][3], ret_board[0][2]];
+  if (ret_board[8][3] !== 0)
+    [ret_board[8][2], ret_board[8][3]] = [ret_board[8][3], ret_board[8][2]];
   return ret_board;
 };

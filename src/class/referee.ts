@@ -25,6 +25,7 @@ export class Referee {
 
   // Constructor
   constructor(_type: OpponentType, _dispatch: React.Dispatch<Action>) {
+    this.dispatch = _dispatch;
     if (_type === "wshuman") {
       this.opponent = new WSHuman(
         this.returnBoard,
@@ -33,7 +34,6 @@ export class Referee {
     } else {
       this.opponent = new CPU(this.returnBoard, this.initializationComplete);
     }
-    this.dispatch = _dispatch;
   }
 
   // プレイヤーが駒を動かしたときに、判定とプレイヤー及び敵へのボード情報の通知を行う
@@ -89,9 +89,10 @@ export class Referee {
     } else {
       // error!
     }
-
+    console.log(this.board);
     // Opponentに反転させたBoard情報を返す
     this.opponent.getBoard(reverse_board(this.board));
+    console.log(this.board);
     // PlayerにBoard情報を返す
     return this.board;
   };
@@ -100,12 +101,16 @@ export class Referee {
   initializationComplete: BoardHandlerType = (_board: Board) => {
     this.state += RefereeStatus.OPPONENT_SET;
     if (this.state === RefereeStatus.BOTH_SET) {
-      this.board = [..._board.slice(0, 4), ...this.board.slice(5)]; // deep copy necessary?
+      this.board = [
+        ..._board.slice(0, 4),
+        Array(6).fill(0),
+        ...this.board.slice(5),
+      ]; // deep copy necessary?
       const board = copy_board(this.board);
       const myturn = true; // プレイヤー側でスタート
       // 敵にボード情報を通知する
       // WebSocketの場合、片側のみがこれを行わないとおかしくなる
-      this.opponent.loadBoard(board);
+      this.opponent.loadBoard(reverse_board(board));
       this.dispatch({ type: "startGame", payload: { board, myturn } });
     } else {
       this.board = _board;
@@ -116,15 +121,20 @@ export class Referee {
   initialize: BoardHandlerType = (_board: Board) => {
     this.state += RefereeStatus.PLAYER_SET;
     if (this.state === RefereeStatus.BOTH_SET) {
-      this.board = [...this.board.slice(0, 4), ..._board.slice(5)]; // deep copy necessary?
+      this.board = [
+        ...this.board.slice(0, 4),
+        Array(6).fill(0),
+        ..._board.slice(5),
+      ]; // deep copy necessary?
       const board = copy_board(this.board);
       const myturn = true; // プレイヤー側でスタート
       // 敵にボード情報を通知する
       // WebSocketの場合、片側のみがこれを行わないとおかしくなる
-      this.opponent.loadBoard(board);
+      this.opponent.loadBoard(reverse_board(board));
       this.dispatch({ type: "startGame", payload: { board, myturn } });
     } else {
       this.board = _board;
+      this.dispatch({ type: "waitingGame" });
     }
   };
 

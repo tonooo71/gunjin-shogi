@@ -32,8 +32,7 @@ type Action =
       };
     }
   | {
-      type: "loadBoard2";
-      payload: Board;
+      type: "waitingGame";
     }
   | {
       type: "startDebug";

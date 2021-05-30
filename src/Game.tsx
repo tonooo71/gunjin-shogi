@@ -1,14 +1,6 @@
-import React, {
-  MutableRefObject,
-  RefObject,
-  useEffect,
-  useReducer,
-  useRef,
-} from "react";
-import "./styles.scss";
+import React, { MutableRefObject, useEffect, useReducer, useRef } from "react";
 import Board from "./Board";
 import Toolbar from "./Toolbar";
-import { random_board } from "./functions_board";
 import { board_ready_state } from "./const";
 import { Referee } from "./class/referee";
 
@@ -26,15 +18,14 @@ const reducer = (state: State, action: Action): State => {
         candidates: [],
       };
     case "startGame":
+      return {
+        ...state,
+        board: action.payload.board,
+        mode: "PLAY",
+        myturn: action.payload.myturn,
+      };
+    case "waitingGame":
       return { ...state, selected: null, mode: "WAITING" };
-    case "loadBoard2": {
-      const board = [
-        ...action.payload.slice(0, 4).map((line) => line.map((num) => -num)),
-        Array(6).fill(0),
-        ...state.board.slice(5, 9),
-      ] as Board;
-      return { ...state, board, mode: "PLAY", myturn: true };
-    }
     case "startDebug": {
       return { ...state, selected: null, mode: "DEBUG" };
     }
@@ -91,21 +82,11 @@ const Game: React.FC<Props> = ({ mode }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (state.mode === "WAITING") {
-      const board = random_board().reverse();
-      setTimeout(() => dispatch({ type: "loadBoard2", payload: board }), 500);
-    }
-  }, [state.mode]);
-
   return (
     <GSContext.Provider value={{ state, dispatch, referee }}>
       <div className="gs-container">
         <Board />
         <Toolbar />
-
-        <span>{`${state.selected}`}</span>
-        <span>{`${JSON.stringify(state.candidates)}`}</span>
       </div>
     </GSContext.Provider>
   );
