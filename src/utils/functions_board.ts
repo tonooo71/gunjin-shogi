@@ -1,4 +1,4 @@
-import { full_pieces_set } from "./const";
+import { full_pieces_set } from "./../const";
 
 export const copy_board = (board: Board): Board => {
   return board.map((line) => [...line]);
@@ -56,4 +56,20 @@ export const reverse_board = (board: Board): Board => {
   if (ret_board[8][3] !== 0)
     [ret_board[8][2], ret_board[8][3]] = [ret_board[8][3], ret_board[8][2]];
   return ret_board;
+};
+
+export const get_board_status = (board: Board): Status => {
+  const p_s = [16, 15, 14, 11, 10, 9];
+  const o_s = [-16, -15, -14, -11, -10, -9];
+  if (p_s.includes(board[0][2])) {
+    return "WIN";
+  } else if (o_s.includes(board[8][2])) {
+    return "LOSE";
+  }
+  const player_alive = board.flat().some((p) => p_s.includes(p));
+  const opponent_alive = board.flat().some((p) => o_s.includes(p));
+  if (!player_alive && !opponent_alive) return "DRAW";
+  else if (!player_alive) return "LOSE";
+  else if (!opponent_alive) return "WIN";
+  else return "PLAYING";
 };

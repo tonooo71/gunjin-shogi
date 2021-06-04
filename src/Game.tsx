@@ -6,8 +6,6 @@ import { Referee } from "./class/referee";
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "changeMode":
-      return { ...state, mode: action.payload };
     case "selectPiece":
       return { ...state, selected: action.payload, candidates: [] };
     case "setBoard":
@@ -26,9 +24,6 @@ const reducer = (state: State, action: Action): State => {
       };
     case "waitingGame":
       return { ...state, selected: null, mode: "WAITING" };
-    case "startDebug": {
-      return { ...state, selected: null, mode: "DEBUG" };
-    }
     case "setCandidates": {
       return {
         ...state,
@@ -39,10 +34,11 @@ const reducer = (state: State, action: Action): State => {
     case "loadBoard": {
       return {
         ...state,
-        board: action.payload,
+        board: action.payload.board,
         selected: null,
         myturn: true,
         candidates: [],
+        status: action.payload.status,
       };
     }
     default:
@@ -56,6 +52,7 @@ const readyState: State = {
   selected: null,
   myturn: true,
   candidates: [],
+  status: "PLAYING",
 };
 
 export const GSContext = React.createContext(

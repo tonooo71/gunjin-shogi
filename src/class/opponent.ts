@@ -1,4 +1,4 @@
-import { random_board, reverse_board } from "../functions_board";
+import { random_board, reverse_board } from "../utils/functions_board";
 
 // 敵クラス(というかインターフェース)
 export class Opponent {

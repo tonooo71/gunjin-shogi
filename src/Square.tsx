@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 import Piece from "./Piece";
 import { GSContext } from "./Game";
-import { change_piece } from "./functions_board";
+import { change_piece } from "./utils/functions_board";
 import {
   include_piece,
   possible_square,
   same_position,
-} from "./functions_piece";
+} from "./utils/functions_piece";
 
 type Props = {
   piece: PieceId;
@@ -42,8 +42,8 @@ const Square: React.FC<Props> = ({ piece, type, position }) => {
       return;
     }
 
-    // mode: WAITING
-    else if (state.mode === "PLAY") {
+    // mode: PLAYING
+    else if (state.mode === "PLAY" && state.status === "PLAYING") {
       if (state.selected === null) {
         if (piece > 0) {
           const candidates = possible_square(piece, state.board, position);
@@ -57,33 +57,7 @@ const Square: React.FC<Props> = ({ piece, type, position }) => {
         dispatch({ type: "selectPiece", payload: null });
       } else {
         if (candidate) {
-          const new_board = referee.current?.movePiece(
-            state.selected,
-            position
-          );
-          new_board && dispatch({ type: "setBoard", payload: new_board });
-        }
-      }
-    }
-
-    // mode: DEBUG
-    else if (state.mode === "DEBUG") {
-      if (state.selected === null) {
-        if (piece > 0) {
-          const candidates = possible_square(piece, state.board, position);
-          dispatch({
-            type: "setCandidates",
-            payload: candidates,
-            payload2: position,
-          });
-        }
-      } else if (selected) {
-        dispatch({ type: "selectPiece", payload: null });
-      } else {
-        if (candidate) {
-          // 戦闘が発生しない場合
-          const new_board = change_piece(state.board, state.selected, position);
-          dispatch({ type: "setBoard", payload: new_board });
+          referee.current?.movePiece(state.selected, position);
         }
       }
     }

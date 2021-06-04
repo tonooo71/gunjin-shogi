@@ -1,10 +1,14 @@
-import { copy_board, reverse_board } from "../functions_board";
-import { match_pieces, same_position } from "../functions_piece";
+import {
+  copy_board,
+  get_board_status,
+  reverse_board,
+} from "../utils/functions_board";
+import { match_pieces, same_position } from "../utils/functions_piece";
 import { CPU, Opponent, WSHuman } from "./opponent";
 
 // enum
 const RefereeStatus = {
-  NO_SET: 0,
+  NO_SET: 0, // Initial
   PLAYER_SET: 1,
   OPPONENT_SET: 2,
   BOTH_SET: 3,
@@ -37,7 +41,7 @@ export class Referee {
   }
 
   // プレイヤーが駒を動かしたときに、判定とプレイヤー及び敵へのボード情報の通知を行う
-  movePiece = (from_position: Position, to_position: Position): Board => {
+  movePiece = (from_position: Position, to_position: Position): void => {
     const selected_piece = this.board[from_position[0]][from_position[1]];
     const _opponent_piece = this.board[to_position[0]][to_position[1]];
 
@@ -92,7 +96,11 @@ export class Referee {
     // Opponentに反転させたBoard情報を返す
     this.opponent.getBoard(reverse_board(this.board));
     // PlayerにBoard情報を返す
-    return this.board;
+    const status = get_board_status(this.board);
+    this.dispatch({
+      type: "loadBoard",
+      payload: { board: copy_board(this.board), status },
+    });
   };
 
   // 敵側の駒の初期配置が終わった後に呼び出される
@@ -140,6 +148,10 @@ export class Referee {
   // プレイヤーのボード情報設置関数を呼び出す
   returnBoard: BoardHandlerType = (board: Board) => {
     this.board = board;
-    this.dispatch({ type: "loadBoard", payload: copy_board(board) });
+    const status = get_board_status(this.board);
+    this.dispatch({
+      type: "loadBoard",
+      payload: { board: copy_board(this.board), status },
+    });
   };
 }
